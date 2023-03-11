@@ -1,0 +1,7 @@
+<launch>
+    <node pkg="uwb_ros" type="uwb" name="uwb_serial" output="screen">
+        <param name="port_name" type="string" value="/dev/ttyUSB0" />
+        <param name="baudrate" type="int" value="115200" />       
+	  <param name="en_print " type="int" value="1" />   
+    </node>
+</launch>
