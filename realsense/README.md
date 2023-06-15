@@ -1,5 +1,10 @@
 # Intel RealSense Config
 
+**目录：**
+
+* [T265 Config](T265.md)
+* [D435i Config](D435i.md)
+
 ## 1. get started
 
 [get started website](https://www.intelrealsense.com/get-started)
