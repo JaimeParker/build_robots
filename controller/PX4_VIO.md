@@ -69,3 +69,34 @@ These can be set in *QGroundControl* > **Vehicle Setup > Parameters > EKF2** (re
 
 For more detailed/additional information, see: [ECL/EKF Overview & Tuning > External Vision System](https://docs.px4.io/main/en/advanced_config/tuning_the_ecl_ekf.html#external-vision-system).
 
+## 2. ros package
+
+关注`/mavros/local_position/pose`这个话题，其坐标系是`map`，以下是该话题消息
+
+```
+---
+header: 
+  seq: 381
+  stamp: 
+    secs: 628
+    nsecs: 251998426
+  frame_id: "map"
+pose: 
+  position: 
+    x: -0.02287876047194004
+    y: -0.008008761331439018
+    z: 0.3785252273082733
+  orientation: 
+    x: -0.001067444341884494
+    y: 0.009099105844802498
+    z: 0.006039685538459739
+    w: -0.999939839332904
+```
+
+我们要想办法将相机里程计的位姿转换到机体坐标系下，再转换到map坐标系下。
+
+使用tf listener做转换，是标准的做法，但是师兄建议我先做简单的，到时候再验证。
+
+那么简单方法是：
+
+![easy](images/easyway.png)
