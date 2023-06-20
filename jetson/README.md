@@ -4,7 +4,8 @@
 
 NVIDIA的Jetson系列有多款产品，根据算力和尺寸等参数进行选择。
 
-* [jetson nano配置](Nano.md)
+* [Jetson nano配置](Nano.md)
+* [Jetson Xavier NX配置](XavierNX.md)
 
 ## WIFI config
 
