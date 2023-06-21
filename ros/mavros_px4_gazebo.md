@@ -213,7 +213,54 @@ Initiating shutdown!
 
 但是这样很不便捷，可能也不适用于多机。
 
+仍然放上我使用第二种方式改装的[iris model](iris)；只复制`iris.sdf`即可。
+
 ## 2. VINS fusion config
 
 我们使用VINS-Fusion方案完成位姿估计，直接用深度图给planner，因此在此处需要先使用VINS-Fusion方案解算位姿。
 
+采用如下脚本，sh文件：
+
+```sh
+#! /bin/bash
+
+# this format can only do jobs one by one
+# roslaunch vins vins_rviz.launch
+# rosrun vins vins_node ~/catkin_ws/src/VINS-Fusion/config/euroc/euroc_stereo_imu_config.yaml
+
+# so we open multi terminals
+gnome-terminal --tab -- bash -c 'roslaunch vins vins_rviz.launch'
+gnome-terminal --tab -- bash -c 'rosrun vins vins_node ~/catkin_ws/src/VINS-Fusion/config/simulation/simulation_config.yaml'
+```
+
+这样可以通过一个文件启动两个终端，比较方便，一键完成；注意更改自己VINS配置文件的位置，且在yaml文件中需要更改相机和IMU话题：
+
+```yaml
+%YAML:1.0
+
+#common parameters
+imu: 1
+num_of_cam: 2  # 1 or 2
+
+imu_topic: "/mavros/imu/data"
+image0_topic: "/stereo/left/image_raw"
+image1_topic: "/stereo/right/image_raw"
+output_path: "/home/hazyparker/ros_user_log"
+
+cam0_calib: "cam0_mei.yaml"
+cam1_calib: "cam1_mei.yaml"
+image_width: 600
+image_height: 600
+```
+
+如果不知道是哪个话题，就把仿真打开，rostopic list，找可能的去info看消息类型，或者echo看内容和消息类型；
+
+但是这样的配置文件有些问题，vins节点直接退了，应该是内参之类的问题。
+
+于是暂时地，我们直接用mavros的里程计代替VINS的里程计，用depth camera结合里程计完成planner；
+
+对应的mavros里程计话题为`/mavros/local_position/odom`；
+
+## 3. depth camera
+
+`camera/depth/image_rect_raw`的消息类型为`Sensor_msgs/Image`
