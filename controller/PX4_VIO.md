@@ -100,3 +100,24 @@ pose:
 那么简单方法是：
 
 ![easy](images/easyway.png)
+
+## 3. Final
+
+首先打开realsense的265包，
+
+```shell
+roslaunch realsense2_camera rs_t265.launch
+```
+
+之后打开mavros
+
+```shell
+roslaunch mavros px4.launch
+```
+
+最后打开已有功能包中的位姿转换（同样是转给vision_pose/pose，为什么我写的不行）
+
+```shell
+roslaunch vision_to_mavros t265_tf_to_mavros.launch
+```
+
