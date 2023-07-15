@@ -2,12 +2,13 @@
 
 **目录：**
 
-* [Pixhawk 6c Instruction](Pixhawk6c.md)
-* [PX4 VIO Config](PX4_VIO.md)
+* [Pixhawk 6c Instruction 飞控硬件Pixhawk6c介绍](Pixhawk6c.md)
+* [PX4 VIO Config 视觉惯性里程计定位配置](PX4_VIO.md)
+* [PX4 make debug 编译配置及bug解决](PX4_make.md)
 
 相关链接：
 
-* [PX4 Autopilot Github](https://github.com/PX4/PX4-Autopilot)
+* [PX4 Autopilot Github 主页](https://github.com/PX4/PX4-Autopilot)
 
 
 

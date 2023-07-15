@@ -34,3 +34,5 @@
 ## T265 定点飞行测试
 
 将相机的里程计话题直接给`/mavros/odometry/out`，如果不稳，则考虑用飞控自己解算的姿态，一般位置是准的。
+
+要确保飞控连接，之后确保`/mavros/local_position/pose`话题已经被飞控解算出，并且从QGC的MAVLink Inspector中看到的位置坐标比较稳定，才可以进行试飞。

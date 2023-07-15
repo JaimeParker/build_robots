@@ -6,6 +6,7 @@ NVIDIA的Jetson系列有多款产品，根据算力和尺寸等参数进行选�
 
 * [Jetson nano配置](Nano.md)
 * [Jetson Xavier NX刷机配置](XavierNX.md)
+* [Bugs record](Bugs.md)
 
 ## WIFI config
 
