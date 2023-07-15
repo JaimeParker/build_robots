@@ -1,0 +1,59 @@
+# PX4-Autopilot make debug
+
+* [main branch](https://github.com/PX4/PX4-Autopilot/tree/main)
+* [v1.12.3](https://github.com/PX4/PX4-Autopilot/tree/v1.12.3)
+
+## 0. Common Dependencies
+
+* Eigen 3.8 or 3.9
+* OpenCV 3 or 4
+
+## 1. main branch(current)
+
+这个bug不多
+
+### 1.x EV(External Vision)
+
+在早期PX4版本中，使用`EKF2_AID_MASK`参数选择位姿估计模式，使用`EKF2_HDG_MODE`选择高度估计模式；但在新版本（不知道源自哪个版本开始）使用`EKF2_EV_CTRL`，来选择是否辅助定位，我暂时没找到新版本如何完全使用视觉定位。这在实际使用时并不影响，但在仿真时则难以判断视觉定位话题传递的成功与否以及效果好坏。
+
+其中，`EKF2_AID_MASK=24`时为采用视觉定位和视觉偏航角。
+
+## 2. v1.12.3
+
+make for gazebo
+
+```shell
+git clone git@github.com:PX4/PX4-Autopilot.git
+cd PX4-Autopilot
+git checkout -b v1.12.3
+git submodule update --init --recursive
+sh Tools/setup/ubuntu.sh
+make px4_sitl_default gazebo
+```
+
+make 之后，会有一些缺少的python3包，根据提示使用pip3安装即可；如果错误都是缺少包，依次安装即可。
+
+### 2.1 Bug opencv2/aruco
+
+* https://discuss.px4.io/t/make-px4-sitl-gazebo-fails-with-opencv-aruco-hpp/33007/3
+
+表现为`gazebo_aruco_plugin.h`找不到opencv中的aruco这个包，这是opencv的额外包；
+
+这个肯定是opencv的版本问题，但我试了4.4，4.3都不行；即使上述帖子说是4.3可以；
+
+因此可以直接把相对应的cmakelist中aruco部分注释掉，make能过，但是可能会对gazebo的camera插件带来一些问题。
+
+## 3. XTDrone
+
+```shell
+git clone https://github.com/PX4/PX4-Autopilot.git
+mv PX4-Autopilot PX4_Firmware
+cd PX4_Firmware
+git checkout -b xtdrone/dev v1.11.0-beta1
+git submodule update --init --recursive
+make px4_sitl_default gazebo
+```
+
+or download from: https://www.yuque.com/xtdrone/manual_cn/basic_config
+
+但是经测试也是一堆bug，暂时没解决。

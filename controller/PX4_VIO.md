@@ -121,3 +121,8 @@ roslaunch mavros px4.launch
 roslaunch vision_to_mavros t265_tf_to_mavros.launch
 ```
 
+## 4. Bugs
+
+使用上述命令时，暂时找不到启动d435的命令；
+
+而如果将上述中的rs_265改为rs_camera，则local_position/pose始终无法得到消息，无法切定点。

@@ -177,3 +177,11 @@ realsense-viewer
 ```
 
 使用此命令来打开Viewer。
+
+## 3. D435i + T265
+
+* https://docs.px4.io/main/zh/peripherals/camera_t265_vio.html
+* https://docs.px4.io/main/zh/advanced_config/tuning_the_ecl_ekf.html#external-vision-system
+* https://docs.px4.io/main/zh/advanced/computer_vision.html
+* https://docs.px4.io/main/en/advanced_config/parameter_reference.html
+* https://github.com/IntelRealSense/realsense-ros/issues/749
