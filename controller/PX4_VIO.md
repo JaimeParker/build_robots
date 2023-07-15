@@ -1,5 +1,9 @@
 # PX4-Autopilot VIO
 
+[测试视频 Demo video](https://www.bilibili.com/video/BV15X4y1Y7ru/?spm_id_from=333.999.0.0&vd_source=516d99bd52250fac3ee3948b1ac4079b)
+
+
+
 from [PX4 User Guide-Visual Inertial Odometry (VIO)](https://docs.px4.io/main/en/computer_vision/visual_inertial_odometry.html)
 
 *Visual Inertial Odometry* (VIO) is a [computer vision](https://docs.px4.io/main/en/computer_vision/) technique used for estimating the 3D *pose* (local position and orientation) and *velocity* of a moving vehicle relative to a *local* starting position. It is commonly used to navigate a vehicle in situations where GPS is absent or unreliable (e.g. indoors, or when flying under a bridge).
@@ -109,10 +113,16 @@ pose:
 roslaunch realsense2_camera rs_t265.launch
 ```
 
-之后打开mavros
+之后打开mavros（注意，此launch文件中的udp需要按实际情况提前配置好）
 
 ```shell
 roslaunch mavros px4.launch
+```
+
+如果串口没有权限，则根据报错需要的串口，提供权限，如：
+
+```shell
+sudo chmod 666 /dev/ttyTHS0
 ```
 
 最后打开已有功能包中的位姿转换（同样是转给vision_pose/pose，为什么我写的不行）
@@ -121,8 +131,48 @@ roslaunch mavros px4.launch
 roslaunch vision_to_mavros t265_tf_to_mavros.launch
 ```
 
-## 4. Bugs
+对于**同时使用D435i和T265的情况**：
 
-使用上述命令时，暂时找不到启动d435的命令；
+首先打开两个相机的ros节点：
 
-而如果将上述中的rs_265改为rs_camera，则local_position/pose始终无法得到消息，无法切定点。
+```
+roslaunch realsense2_camera rs_d400_and_t265.launch
+```
+
+之后打开MAVROS和飞控的通信：
+
+```shell
+roslaunch mavros px4.launch
+```
+
+修改`vision_to_mavros`包中，`t265_tf_to_mavros.launch`包的参数
+
+```xml
+<launch>
+
+    <!-- This node will launch frame conversion from vision pose (tf) to mavros pose -->
+    <arg name="target_frame_id"   default="/camera_odom_frame" />
+    <param name="target_frame_id"   value="$(arg target_frame_id)" />
+
+    <arg name="source_frame_id"   default="/camera_link" />
+    <param name="source_frame_id"   value="$(arg source_frame_id)" />
+
+    <param name="output_rate"       value="30" />
+    <param name="roll_cam"          value="0" />
+    <param name="pitch_cam"         value="0" />
+    <param name="yaw_cam"           value="0" />
+    <param name="gamma_world"       value="0" />
+
+    <node pkg="vision_to_mavros" type="vision_to_mavros_node" name="t265_to_mavros" output="screen" >
+        <remap from="vision_pose" to="/mavros/vision_pose/pose" />
+    </node>
+</launch>
+```
+
+* `source_frame_id`: `/t265_link`
+* `target_frame_id`: `/t265_odom_frame`
+
+之后launch该t265转换；
+
+经过测试，切定点可以正常飞行，在室内。
+
