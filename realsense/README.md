@@ -178,7 +178,26 @@ realsense-viewer
 
 使用此命令来打开Viewer。
 
-## 3. D435i + T265
+## 3. Realsense ros
+
+如果使用T265，则该ros包最新只能使用[ROS Wrapper for Intel® RealSense™ Devices (build 2.3.2)](https://github.com/IntelRealSense/realsense-ros/releases/tag/2.3.2)
+
+首先安装依赖，ddynamic_reconfigure
+
+```shell
+cd catkin_ws/src
+git clone git@github.com:pal-robotics/ddynamic_reconfigure.git
+cd ..
+catkin_make
+```
+
+之后再下载realsense-ros包并解压，之后
+
+```sh
+catkin_make
+```
+
+## 4. D435i + T265
 
 * https://docs.px4.io/main/zh/peripherals/camera_t265_vio.html
 * https://docs.px4.io/main/zh/advanced_config/tuning_the_ecl_ekf.html#external-vision-system
