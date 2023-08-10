@@ -1,8 +1,8 @@
-# Planner
+# Use planner in application
 
-主要使用的是FAST LAB的ego planner和HKUST Aerial Group的fast planner。
+planner: [qgo-planner](https://github.com/ZJU-FAST-Lab/ego-planner)
 
-观察一下其主要的启动launch文件，大同小异；
+revise a launch file:
 
 ```xml
 <launch>
@@ -47,31 +47,7 @@
 
     <!-- 1: use 2D Nav Goal to select goal  -->
     <!-- 2: use global waypoints below  -->
-    <arg name="flight_type" value="2" />
-    
-    <!-- global waypoints -->
-    <!-- It generates a piecewise min-snap traj passing all waypoints -->
-    <arg name="point_num" value="5" />
-
-    <arg name="point0_x" value="-15.0" />
-    <arg name="point0_y" value="0.0" />
-    <arg name="point0_z" value="1.0" />
-
-    <arg name="point1_x" value="0.0" />
-    <arg name="point1_y" value="15.0" />
-    <arg name="point1_z" value="1.0" />
-
-    <arg name="point2_x" value="15.0" />
-    <arg name="point2_y" value="0.0" />
-    <arg name="point2_z" value="1.0" />
-
-    <arg name="point3_x" value="0.0" />
-    <arg name="point3_y" value="-15.0" />
-    <arg name="point3_z" value="1.0" />
-
-    <arg name="point4_x" value="-15.0" />
-    <arg name="point4_y" value="0.0" />
-    <arg name="point4_z" value="1.0" />
+    <arg name="flight_type" value="1" />
     
   </include>
 
@@ -89,75 +65,19 @@
     <remap from="~traj_start_trigger" to="/traj_start_trigger" />
     <param name="waypoint_type" value="manual-lonely-waypoint"/>    
   </node>
-
-  <!-- use simulator -->
-  <include file="$(find ego_planner)/launch/simulator.xml">
-    <arg name="map_size_x_" value="$(arg map_size_x)"/>
-    <arg name="map_size_y_" value="$(arg map_size_y)"/>
-    <arg name="map_size_z_" value="$(arg map_size_z)"/>
-    <arg name="c_num" value="200"/>
-    <arg name="p_num" value="200"/>
-    <arg name="min_dist" value="1.2"/>
-
-    <arg name="odometry_topic" value="$(arg odom_topic)" />
-  </include>
-
-  <include file="$(find ego_planner)/launch/rviz.launch"/>
-
-</launch>
 ```
 
-需要关注的为以下几个topic：
+If you are using a Lidar, then odom+pointcloud is recommended;
 
-```xml
-  <!-- topic of your odometry such as VIO or LIO -->
-  <arg name="odom_topic" value="/visual_slam/odom" />
-    <!-- camera pose: transform of camera frame in the world frame -->
-    <!-- depth topic: depth image, 640x480 by default -->
-    <!-- don't set cloud_topic if you already set these ones! -->
-    <arg name="camera_pose_topic" value="/pcl_render_node/camera_pose"/>
-    <arg name="depth_topic" value="/pcl_render_node/depth"/>
+However, if you are using a depth (RGBD) camera like Intel Realsense D435i, option vision_pose+depth image is more recommended.
 
-    <!-- topic of point cloud measurement, such as from LIDAR  -->
-    <!-- don't set camera pose and depth, if you already set this one! -->
-    <arg name="cloud_topic" value="/pcl_render_node/cloud"/>
-```
+Make sure that the message format of these topics:
 
-其中，1是必须的，23和4则为任选一种；这几个话题的消息类型分别为：
+* odom, using `nav_msgs::Odometry`
+* pointcloud, using `Pointcloud2`
+* vision pose, using `geometry_msgs::PoseStamped`
+* depth image, using `sensor_msgs::Image`
 
-* `odom_topic`: nav_msg::Odometry
-* `camera_pose_topic` : geometry_msg::posestamp
-* `depth_topic`: sensor_msg::Image
-* `cloud_topic`: PointCloud2
+Also make sure that the velocity and acceleration are suitable for your experiment  condition. The size of map is also useful if you are using a quite small flight area.
 
-所以在移植时需要注意话题消息类型对应，其中，这些话题消息的header.frame_id均为world；这一点比较麻烦，因为realsense的ros节点，生成的各种话题消息有其定义好的坐标系及tf tree转换关系；
-
-转换起来有点麻烦，暂时我是直接新建立一个话题，通过一个subscribe和publisher完成接收消息，更改header.frame_id然后再发布出去，给planner的话题接收；
-
-在移植时，为了方便我会将这一段直接注释掉：
-
-```xml
-  <!-- use simulator -->
-  <include file="$(find ego_planner)/launch/simulator.xml">
-    <arg name="map_size_x_" value="$(arg map_size_x)"/>
-    <arg name="map_size_y_" value="$(arg map_size_y)"/>
-    <arg name="map_size_z_" value="$(arg map_size_z)"/>
-    <arg name="c_num" value="200"/>
-    <arg name="p_num" value="200"/>
-    <arg name="min_dist" value="1.2"/>
-
-    <arg name="odometry_topic" value="$(arg odom_topic)" />
-  </include>
-```
-
-也就是不用simulator生成的地图，直接用gazebo中的或者realsense获得的。
-
-一些bugs：
-
-* 在fast planner中， 运行rviz后real map默认使用的是激光雷达的话题，如果不对我们使用的点云做坐标系转换，则会导致由于坐标系不同的报错；但是即使是坐标系转换到world下，输入深度信息，其inflate map仍然不是我们想要的occupancy grid map格式，而是点云格式；
-* 而在ego中，只要注释掉simulator和完成world的坐标转换，可以得到正确的inflate map和real map
-
-FIXME：
-
-* 我用的方法太愚蠢了，有空了标准化一下，使用标准的tf2完成这些转换。
-* 一个可能出现的bug，rate的定义和queue size的选择，我记得是不匹配的话会有冲突
+And two significant parameters that could have great influence on the result, intrinsic matrix of depth camera and inflate map rate (default=0.99).
