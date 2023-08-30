@@ -90,3 +90,38 @@ roslaunch ego_planner test.launch
 rosrun ego_planner cmd_to_controller
 ```
 
+#### V1.1
+
+**需要更新代码**
+
+* px4_mavros_controller 的 RTKTransfer.cc
+* Ego-Planner-FASTLAB 的 cmd_to_controller.cc
+
+为外场测试初步设计：
+
+```shell
+# for nuc
+sudo chmod 666 /dev/ttyACM0
+# for NX
+sudo chmod 666 /dev/ttyTHS0
+
+roslaunch mavros px4.launch
+
+# (default) for realsense d425i and t265 at the same time
+roslaunch realsense2_camera rs_d400_and_t265.launch
+```
+
+之后启动mavros的ENU系到planner和相机的world系下的无人机位姿转换：
+
+```shell
+rosrun px4_mavros_controller rtk_transfer
+```
+
+之后照旧：
+
+```shell
+roslaunch px4_mavros_controller mavros_ego_planner.launch
+roslaunch ego_planner test.launch
+rosrun ego_planner cmd_to_controller
+```
+
