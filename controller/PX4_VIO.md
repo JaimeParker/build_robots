@@ -176,3 +176,6 @@ roslaunch mavros px4.launch
 
 经过测试，切定点可以正常飞行，在室内。
 
+**串口权限：**
+
+一般是通过`sudo chmod 666 /dev/ttyXXX`赋予权限，但是在Intel NUC上通过`chmod 777`可以赋予永久权限，但在Xavier NX上仍有问题。
