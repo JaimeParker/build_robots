@@ -7,7 +7,7 @@
 首先**在ubuntu上ping通windows**。
 
 * windows打开专用网络共享，可在专用网络上被发现
-* 关闭防火墙（后来测试发现不用关，但是win之间ping可能需要关）
+* 关闭防火墙（更正，需要关闭专用网络防火墙）
 * 确认网络ip地址
 
 我们的连接是动捕占据了主机的网线连接，即以太网，因此只能通过WIFI向外发送；
@@ -16,9 +16,13 @@
 
 * 在ubuntu中 `ping 192.168.3.15`，通则成功
 
-## 2. Ros Topic
+## 2. Ros Topic 
 
 确认网络连接无误后，在ubuntu上打开vrpn server，使用roslaunch方式（如果改变ip地址，修改launch的IP地址）；
+
+```shell
+roslaunch vrpn_client_ros sample.launch server:=192.168.3.15
+```
 
 将获得pose, twist, accel三个话题；
 
@@ -27,3 +31,10 @@
 * topic type: geometry_msgs/**PoseStamped**
 * topic frequency: 60 hz
 * frame_id: world
+
+可以使用`topic_tools`
+
+```shell
+rosrun topic_tools relay /vrpn_client_node/UAV1/pose /mavros/vision_pose/pose
+```
+
