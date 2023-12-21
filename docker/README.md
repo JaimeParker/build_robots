@@ -36,6 +36,8 @@ with clear one, you can use
 sudo docker build -t docker_name:tag .
 ```
 
+tag will be latest if no tag specified.
+
 **run**
 
 ```shell
@@ -57,6 +59,14 @@ sudo docker save -o saved_docker_name.tar docker_name:tag
 ```shell
 sudo docker load -i xxx.tar
 ```
+
+**delete**
+
+```shell
+sudo docker rmi -f id
+```
+
+id can be accessed from `docker images`.s
 
 **about qemu**
 
