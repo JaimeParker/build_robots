@@ -94,3 +94,19 @@ controls: [0.0, 0.0, 0.0, 0.4215362071990967, 0.0, 0.0, 0.0, 0.0]
 ```
 
 由于上述mavlink的error，也无法验证这样赋值是否可行。还是尽量不要用  `/mavros/actuator_control` 
+
+## MAVLink
+
+`PX4-Autopilot/src/modules/mavlink/mavlink_main.cpp`
+
+```
+case MAVLINK_MODE_ONBOARD:
+		// Note: streams requiring low latency come first
+		configure_stream_local("TIMESYNC", 10.0f);
+		configure_stream_local("CAMERA_TRIGGER", unlimited_rate);
+		configure_stream_local("HIGHRES_IMU", 50.0f);
+		configure_stream_local("LOCAL_POSITION_NED", 100.0f);
+		configure_stream_local("ATTITUDE", 100.0f);
+```
+
+change the frequency of pose and attitude topic here.

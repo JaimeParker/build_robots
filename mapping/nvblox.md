@@ -1,6 +1,10 @@
-# nvblox
+# nvblox core
 
-Signed Distance Functions (SDFs) on NVIDIA GPUs.
+* [Github nvblox from nvidia-issac](https://github.com/nvidia-isaac/nvblox)
+* [Github nvblox-ros1 from ASL, ETH](https://github.com/ethz-asl/nvblox_ros1)
+* ros2 version will not be considered currently
+
+**Signed Distance Functions (SDFs) on NVIDIA GPUs.**
 
 A GPU SDF library which offers
 
